@@ -98,48 +98,47 @@ NewRGB = imresize(NewRGB,outputScalingFactor);
 
 
 %% Write text to image
-
-
-if ~exist ('TitleText', 'var')
-    TitleText = 'No filename specified';
-else
-    TitleText = strrep(TitleText,'wRepacked_','');
-    TitleText = strrep(TitleText,'.nii','');
-end
-
-%Title Text
-NewRGB = AddTextToImage(NewRGB,TitleText, [1 10]*outputScalingFactor, textColor,'Arial', 20*outputScalingFactor);
-
-%Thresholds to colorbars
-NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffLow), [yRow(1) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(1)+100) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-
-NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffHigh), [yRow(2) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(2)+100) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-
-NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',upperThreshholdSlices), [yRow(3) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',lowerThreshholdSlices), [(yRow(3)+100) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-
-% image descriptions, i.e. "L lateral", "above"...
-descriptionString{1} = 'L lateral';
-descriptionString{2} = 'R lateral';
-descriptionString{3} = 'L mesial';
-descriptionString{4} = 'R mesial';
-descriptionString{5} = 'below';
-descriptionString{6} = 'above';
-
-for i=1:6
-     NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(1)-20) (25+100*(i-1))]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-end
-for i=1:6
-     NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(2)-20) (25+100*(i-1))]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-end
-
-
-% DescriptionText and MIP thickness
-NewRGB = AddTextToImage(NewRGB, DescriptionText, [30 10]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-NewRGB = AddTextToImage(NewRGB, ['3DSSPs with MIP Thickness: ' num2str(MipThickness)], [(yRow(1)-50) 10]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-NewRGB = AddTextToImage(NewRGB, ['Transverse cuts of deviation map. Maximum Z-value: ' sprintf('%.1f', maxVoxelValue)], [(yRow(3)-30) 10]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+% 
+% if ~exist ('TitleText', 'var')
+%     TitleText = 'No filename specified';
+% else
+%     TitleText = strrep(TitleText,'wRepacked_','');
+%     TitleText = strrep(TitleText,'.nii','');
+% end
+% 
+% %Title Text
+% NewRGB = AddTextToImage(NewRGB,TitleText, [1 10]*outputScalingFactor, textColor,'Arial', 20*outputScalingFactor);
+% 
+% %Thresholds to colorbars
+% NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffLow), [yRow(1) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+% NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(1)+100) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+% 
+% NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffHigh), [yRow(2) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+% NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(2)+100) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+% 
+% NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',upperThreshholdSlices), [yRow(3) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+% NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',lowerThreshholdSlices), [(yRow(3)+100) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+% 
+% % image descriptions, i.e. "L lateral", "above"...
+% descriptionString{1} = 'L lateral';
+% descriptionString{2} = 'R lateral';
+% descriptionString{3} = 'L mesial';
+% descriptionString{4} = 'R mesial';
+% descriptionString{5} = 'below';
+% descriptionString{6} = 'above';
+% 
+% for i=1:6
+%      NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(1)-20) (25+100*(i-1))]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+% end
+% for i=1:6
+%      NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(2)-20) (25+100*(i-1))]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+% end
+% 
+% 
+% % DescriptionText and MIP thickness
+% NewRGB = AddTextToImage(NewRGB, DescriptionText, [30 10]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+% NewRGB = AddTextToImage(NewRGB, ['3DSSPs with MIP Thickness: ' num2str(MipThickness)], [(yRow(1)-50) 10]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+% NewRGB = AddTextToImage(NewRGB, ['Transverse cuts of deviation map. Maximum Z-value: ' sprintf('%.1f', maxVoxelValue)], [(yRow(3)-30) 10]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
 
 
 %% return result bitmap
