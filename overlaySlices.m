@@ -24,16 +24,16 @@ cutOffHigh = 20;
 ySize=500;
 xSize=510;
 
-yRow(1) = 10; % Top Part of Output RGB
-yRow(2)  = 20; % Middle Part of Output RGB
-yRow(3)  = 30;% Lower Part of Output RGB <-- Slices go here
+yRow(1) = 10; % Offset of Top Part of Output RGB
+yRow(2)  = 20; % Offset of Middle Part of Output RGB
+yRow(3)  = 100;% Offset of Lower Part of Output RGB <-- Slices go here
 
 xOffsetColorBar = 410;
 xOffsetColorBarText = 430;
 
 textColor = [1 1 1];
 
-outputScalingFactor = 2;
+outputScalingFactor = 3;
 
 NewRGB = zeros(ySize,xSize,3);
 %NewRGB(:,:,3) = 1;
@@ -95,6 +95,15 @@ NewRGB = placeRGBImage(NewRGB, ColorBar, xOffsetColorBar,yRow(3));
 %% Resize image
 
 NewRGB = imresize(NewRGB,outputScalingFactor);
+%imshow(NewRGB);
+
+
+%% Write text to image via external CLI tool
+
+imwrite(NewRGB, 'slices.png');
+
+
+
 
 
 %% Write text to image
