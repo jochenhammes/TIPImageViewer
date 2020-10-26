@@ -1,6 +1,8 @@
 function [OutputRGB] = overlaySlices(pathToInputNii, MipThickness, TitleText)
 %% Environment
 
+%Test
+
 pathToInputNii = 'inputImages/BET_zDev_automatedCGN_SRTM2_BPnd_image.nii';
 pathMNI_T1 = 'TemplateImages/ch2_79x75x78.nii';
 MipThickness = 5;
