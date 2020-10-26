@@ -103,6 +103,7 @@ NewRGB = imresize(NewRGB,outputScalingFactor);
 %% Write text to image via external CLI tool
 
 imwrite(NewRGB, 'slices.png');
+system('convert -pointsize 40 -fill white -draw "text 20,60 ''Gabriele Musterfrau, Geb:  *16.07.1967, Scan: 22.10.2020 '' " slices.png newslices.png');
 
 
 
