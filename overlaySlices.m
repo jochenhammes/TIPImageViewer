@@ -1,10 +1,12 @@
-function [OutputRGB] = overlaySlices(pathToInputNii, MipThickness, TitleText, pathToDicom)
+function [OutputRGB] = overlaySlices(pathToInputNii, pathToDicom)
 %% Environment
 
 %Test
 
 pathToInputNii = 'inputImages/BET_zDev_automatedCGN_SRTM2_BPnd_image.nii';
 pathMNI_T1 = 'TemplateImages/ch2_79x75x78.nii';
+pathToDicom = '/DATA/hammesj/PI2620_KinMod/Gripp/10000000/10000001/10000002/10001533';
+
 MipThickness = 5;
 
 %Load  Nii-File
@@ -18,13 +20,9 @@ lowerThreshholdSlices = maxVoxelValue/8;
 MatrixSize = size(InputNii.img);
 EvenMatrixSize = MatrixSize+mod(MatrixSize,2);
 
-DescriptionText = 'Z-transformed deviation of PI2620 BPND compared to a norm cohort';
-
-cutOffLow = 4;
-cutOffHigh = 20;
 
 ySize=500;
-xSize=510;
+xSize=455;
 
 yRow(1) = 10; % Offset of Top Part of Output RGB
 yRow(2)  = 20; % Offset of Middle Part of Output RGB
@@ -102,8 +100,6 @@ NewRGB = imresize(NewRGB,outputScalingFactor);
 imwrite(NewRGB, 'slices.png');
 
 %% Read DICOM header
-pathToDicom = '/DATA/hammesj/PI2620_KinMod/Gripp/DICOMDIR';
-pathToDicom = '/DATA/hammesj/PI2620_KinMod/Gripp/10000000/10000001/10000002/10001533';
 dicomHeader = dicominfo(pathToDicom);
 
 patientData.Name = [dicomHeader.PatientName.FamilyName ', ' dicomHeader.PatientName.GivenName];
@@ -133,6 +129,22 @@ systemCommandToDrawText = ['convert -pointsize 35 -fill white -draw "text ' ...
     num2str(xOffsetColorBar * outputScalingFactor) ...
     ',' num2str(yRow(3) * outputScalingFactor - 20) ' ' ...
     textDelim 'Z' textDelim ...
+    ' " newslices.png newslices.png'];
+system(systemCommandToDrawText)
+
+
+systemCommandToDrawText = ['convert -pointsize 35 -fill white -draw "text ' ...
+    num2str(xOffsetColorBar * outputScalingFactor + 40) ...
+    ',' num2str(yRow(3) * outputScalingFactor + 40) ' ' ...
+    textDelim num2str(upperThreshholdSlices, '%2.1f') textDelim ...
+    ' " newslices.png newslices.png'];
+system(systemCommandToDrawText)
+
+
+systemCommandToDrawText = ['convert -pointsize 35 -fill white -draw "text ' ...
+    num2str(xOffsetColorBar * outputScalingFactor + 40) ...
+    ',' num2str(yRow(3) * outputScalingFactor + 350) ' ' ...
+    textDelim num2str(lowerThreshholdSlices, '%2.1f') textDelim ...
     ' " newslices.png newslices.png'];
 system(systemCommandToDrawText)
 
