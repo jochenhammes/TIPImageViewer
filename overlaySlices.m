@@ -1,4 +1,4 @@
-function [OutputRGB] = overlaySlices(pathToInputNii, MipThickness, TitleText)
+function [OutputRGB] = overlaySlices(pathToInputNii, MipThickness, TitleText, pathToDicom)
 %% Environment
 
 %Test
@@ -31,7 +31,6 @@ yRow(2)  = 20; % Offset of Middle Part of Output RGB
 yRow(3)  = 100;% Offset of Lower Part of Output RGB <-- Slices go here
 
 xOffsetColorBar = 410;
-xOffsetColorBarText = 430;
 
 textColor = [1 1 1];
 
@@ -99,58 +98,60 @@ NewRGB = placeRGBImage(NewRGB, ColorBar, xOffsetColorBar,yRow(3));
 NewRGB = imresize(NewRGB,outputScalingFactor);
 %imshow(NewRGB);
 
+%save image to file
+imwrite(NewRGB, 'slices.png');
+
+%% Read DICOM header
+pathToDicom = '/DATA/hammesj/PI2620_KinMod/Gripp/DICOMDIR';
+pathToDicom = '/DATA/hammesj/PI2620_KinMod/Gripp/10000000/10000001/10000002/10001533';
+dicomHeader = dicominfo(pathToDicom);
+
+patientData.Name = [dicomHeader.PatientName.FamilyName ', ' dicomHeader.PatientName.GivenName];
+patientData.DoB = [dicomHeader.PatientBirthDate(7:8) '.' dicomHeader.PatientBirthDate(5:6) '.' dicomHeader.PatientBirthDate(1:4)]
+patientData.StudyDate = [dicomHeader.StudyDate(7:8) '.' dicomHeader.StudyDate(5:6) '.' dicomHeader.StudyDate(1:4)]
+
 
 %% Write text to image via external CLI tool
 
-imwrite(NewRGB, 'slices.png');
-system('convert -pointsize 40 -fill white -draw "text 20,60 ''Gabriele Musterfrau, Geb:  *16.07.1967, Scan: 22.10.2020 '' " slices.png newslices.png');
+textDelim = '''';
+%disp(textDelim);
+
+%Draw title to image
+systemCommandToDrawText = ['convert -pointsize 50 -fill white -draw "text 20,60 ' ...
+    textDelim 'PI2620 Tau-PET Analysis' textDelim ...
+    ' " slices.png newslices.png'];
+system(systemCommandToDrawText)
+
+systemCommandToDrawText = ['convert -pointsize 35 -fill white -draw "text 20,100 ' ...
+    textDelim 'Z-transformed deviations of non displaceable binding from controls' textDelim ...
+    ' " newslices.png newslices.png'];
+system(systemCommandToDrawText)
+
+
+%Draw annotations to LUT
+systemCommandToDrawText = ['convert -pointsize 35 -fill white -draw "text ' ...
+    num2str(xOffsetColorBar * outputScalingFactor) ...
+    ',' num2str(yRow(3) * outputScalingFactor - 20) ' ' ...
+    textDelim 'Z' textDelim ...
+    ' " newslices.png newslices.png'];
+system(systemCommandToDrawText)
 
 
 
 
 
-%% Write text to image
-% 
-% if ~exist ('TitleText', 'var')
-%     TitleText = 'No filename specified';
-% else
-%     TitleText = strrep(TitleText,'wRepacked_','');
-%     TitleText = strrep(TitleText,'.nii','');
-% end
-% 
-% %Title Text
-% NewRGB = AddTextToImage(NewRGB,TitleText, [1 10]*outputScalingFactor, textColor,'Arial', 20*outputScalingFactor);
-% 
-% %Thresholds to colorbars
-% NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffLow), [yRow(1) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-% NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(1)+100) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-% 
-% NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffHigh), [yRow(2) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-% NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(2)+100) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-% 
-% NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',upperThreshholdSlices), [yRow(3) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-% NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',lowerThreshholdSlices), [(yRow(3)+100) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-% 
-% % image descriptions, i.e. "L lateral", "above"...
-% descriptionString{1} = 'L lateral';
-% descriptionString{2} = 'R lateral';
-% descriptionString{3} = 'L mesial';
-% descriptionString{4} = 'R mesial';
-% descriptionString{5} = 'below';
-% descriptionString{6} = 'above';
-% 
-% for i=1:6
-%      NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(1)-20) (25+100*(i-1))]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-% end
-% for i=1:6
-%      NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(2)-20) (25+100*(i-1))]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-% end
-% 
-% 
-% % DescriptionText and MIP thickness
-% NewRGB = AddTextToImage(NewRGB, DescriptionText, [30 10]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-% NewRGB = AddTextToImage(NewRGB, ['3DSSPs with MIP Thickness: ' num2str(MipThickness)], [(yRow(1)-50) 10]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
-% NewRGB = AddTextToImage(NewRGB, ['Transverse cuts of deviation map. Maximum Z-value: ' sprintf('%.1f', maxVoxelValue)], [(yRow(3)-30) 10]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+%Draw patient data to image
+systemCommandToDrawText = ['convert -pointsize 35 -fill white -draw "text 20,160 ' ...
+    textDelim 'Patient: ' patientData.Name ' , *' patientData.DoB textDelim ...
+    ' " newslices.png newslices.png'];
+system(systemCommandToDrawText)
+
+systemCommandToDrawText = ['convert -pointsize 35 -fill white -draw "text 20,200 ' ...
+    textDelim 'Study Date: ' patientData.StudyDate textDelim ...
+    ' " newslices.png newslices.png'];
+system(systemCommandToDrawText)
+
+
 
 
 %% return result bitmap
