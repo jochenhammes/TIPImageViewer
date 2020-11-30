@@ -1,10 +1,10 @@
-function [OutputRGB] = overlaySlices(pathToInputNiiBPND, pathToInputNiiZmap, pathToDicom)
+function [OutputRGB] = overlaySlices(pathToInputNiiBPND, pathToInputNiiZmap, pathToDicom, outputPath)
 %% Environment
 
 %pathToInputNiiBPND = 'inputImages/BET_automatedCGN_SRTM2_BPnd_image.nii';
 %pathToInputNiiZmap = 'inputImages/BET_zDev_automatedCGN_SRTM2_BPnd_image.nii';
+%pathToDicom = '/DATA/hammesj/PI2620_KinMod/Gripp/';
 pathMNI_T1 = 'TemplateImages/ch2_79x75x78.nii';
-pathToDicom = '/DATA/hammesj/PI2620_KinMod/Gripp/';
 dcms = dir([pathToDicom '**']);
 dcms=dcms(~ismember({dcms.name},{'.','..','.DS_Store','._.DS_Store','DICOMDIR', 'workdir', 'results_kinetic_modeling'}));
 dcms=dcms(~contains({dcms.name},{'\','.nii','.png','.txt','.mat'}));
@@ -15,6 +15,10 @@ for i = length(dcms):-1:1
     end 
 end 
 pathToDicom = [dcms(1).folder filesep dcms(1).name]
+
+if ~exist('outputPath','var')
+    outputPath = '';
+end
 
 
 
@@ -252,11 +256,11 @@ system(systemCommandToDrawText)
 
 %% Rename File
 
-movefile('newslices.png', 'TIP2_Output.png');
+movefile('newslices.png', [outputPath 'TIP2_Output.png']);
 
 %% Save DICOM File
 
-dicomwrite(imread('TIP2_Output.png'), 'TIP2_Output.dcm');
+dicomwrite(imread([outputPath 'TIP2_Output.png']), [outputPath 'TIP2_Output.dcm']);
 
 %% return result bitmap
 OutputRGB = NewRGB;
