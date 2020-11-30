@@ -263,7 +263,7 @@ movefile('newslices.png', [outputPath 'TIP2_Output.png']);
 dicomwrite(imread([outputPath 'TIP2_Output.png']), [outputPath 'TIP2_Output.dcm']);
 
 %% return result bitmap
-OutputRGB = imread([outputPath 'TIP2_Output.png'];
+OutputRGB = imread([outputPath 'TIP2_Output.png']);
 
 
 end
