@@ -5,7 +5,19 @@ function [OutputRGB] = overlaySlices(pathToInputNii, pathToDicom)
 
 pathToInputNii = 'inputImages/BET_zDev_automatedCGN_SRTM2_BPnd_image.nii';
 pathMNI_T1 = 'TemplateImages/ch2_79x75x78.nii';
-pathToDicom = '/DATA/hammesj/PI2620_KinMod/Gripp/10000000/10000001/10000002/10001533';
+pathToDicom = '/DATA/hammesj/PI2620_KinMod/Gripp/';
+dcms = dir([pathToDicom '**']);
+dcms=dcms(~ismember({dcms.name},{'.','..','.DS_Store','._.DS_Store','DICOMDIR', 'workdir', 'results_kinetic_modeling'}));
+dcms=dcms(~contains({dcms.name},{'\','.nii','.png','.txt','.mat'}));
+
+for i = length(dcms):-1:1
+    if dcms(i).isdir 
+        dcms(i) = [];
+    end 
+end 
+pathToDicom = [dcms(1).folder filesep dcms(1).name]
+
+
 
 MipThickness = 5;
 
