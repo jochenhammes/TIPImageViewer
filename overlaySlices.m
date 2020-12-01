@@ -32,7 +32,7 @@ MNI_T1 = load_nii(pathMNI_T1);
 maxVoxelValue = max(InputNiiZMap.img(:));
 upperThreshholdSlices = maxVoxelValue/2;
 lowerThreshholdSlices = maxVoxelValue/8;
-upperThreshholdSlicesBPND = 1;
+upperThreshholdSlicesBPND = 2;
 lowerThreshholdSlicesBPND = 0.1;
 
 MatrixSize = size(InputNiiZMap.img);
